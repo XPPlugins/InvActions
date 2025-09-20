@@ -39,7 +39,7 @@ public enum ItemType {
     OTHER;
 
     public static boolean isAir(Material material) {
-        switch (material.toString()) {  //兼容1.16-，使用字符串对比
+        switch (material.toString().toUpperCase()) {  //兼容1.16-，使用字符串对比
             case "AIR":
             case "CAVE_AIR":
             case "VOID_AIR":

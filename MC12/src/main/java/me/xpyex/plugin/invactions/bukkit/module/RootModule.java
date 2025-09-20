@@ -173,7 +173,6 @@ public abstract class RootModule implements Listener {
     }
 
     public long getCooldown(Player player) {
-        ValueUtil.mustTrue("玩家自身未启用该模块", playerEnabled(player));
         if (!cooldown.containsKey(player.getUniqueId())) {
             cooldown.put(player.getUniqueId(), 0L);
         }

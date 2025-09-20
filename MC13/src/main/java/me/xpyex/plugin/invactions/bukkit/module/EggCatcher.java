@@ -57,6 +57,8 @@ public class EggCatcher extends RootModule {
                             } else {
                                 MsgUtil.sendActionBar(p, getMessageWithSuffix("failed", LangUtil.getTranslationName(hitEntityType)));
                             }
+                        } else if (chance < 0 || chance > 100) {
+                            MsgUtil.debugLog(InvActions.getInstance(), "EggCatcher: 玩家 " + p.getName() + " 用鸡蛋命中 " + hitEntityType + " 时，几率为非法值: chance=" + chance);
                         }
                     }
                 }

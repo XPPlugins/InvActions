@@ -1,5 +1,6 @@
 package me.xpyex.plugin.invactions.bukkit.module;
 
+import java.util.Objects;
 import me.xpyex.lib.xplib.bukkit.strings.MsgUtil;
 import me.xpyex.lib.xplib.util.reflect.ClassUtil;
 import me.xpyex.lib.xplib.util.reflect.MethodUtil;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public class ReplaceBrokenTool extends RootModule {
     @Override
@@ -58,6 +60,9 @@ public class ReplaceBrokenTool extends RootModule {
 
     @EventHandler(ignoreCancelled = true)
     public void onItemBreak(PlayerItemBreakEvent event) {
+        if (!serverEnabled() || !playerEnabled(event.getPlayer())) {  //如果玩家未开启替换手中道具
+            return;
+        }
         EquipmentSlot slot = null;
         for (EquipmentSlot value : EquipmentSlot.values()) {
             if (event.getBrokenItem().equals(event.getPlayer().getInventory().getItem(value))) {
@@ -69,21 +74,22 @@ public class ReplaceBrokenTool extends RootModule {
             switch (slot) {
                 case HAND:
                 case OFF_HAND:
-                    if (!serverEnabled() || !playerEnabled(event.getPlayer())) {  //如果玩家未开启替换手中道具
-                        return;
-                    }
-                    break;
+                    break;  //仅接受手中道具和副手道具损坏的情况
                 default:
                     return;
             }
-            EquipmentSlot finalSlot = slot;
-            ItemStack brokenItem = new ItemStack(event.getBrokenItem());
+            EquipmentSlot finalSlot = slot;  //传给下面lambda的
+            ItemStack brokenItem = new ItemStack(event.getBrokenItem());  //复制一份，因为接下来是2tick后执行，确保安全
+
             Bukkit.getScheduler().runTaskLater(InvActions.getInstance(), () -> {
                 for (int i = 0; i < event.getPlayer().getInventory().getContents().length; i++) {
-                    ItemStack content = event.getPlayer().getInventory().getItem(i);
-                    if (content == null) continue;
+                    ItemStack content = event.getPlayer().getInventory().getItem(i);  //背包里的那份道具
+                    if (content == null || content.getType() == Material.AIR) continue;
 
-                    if (content.getType() == brokenItem.getType()) {  //同一种类型的道具
+                    System.out.println("content.getType() = " + content.getType());
+                    System.out.println("brokenItem.getType() = " + brokenItem.getType());
+                    if (Objects.equals(content.getType(), brokenItem.getType())) {  //同一种类型的道具
+                        System.out.println("stop");
                         InvUtil.swapSlot(event.getPlayer(), finalSlot, i);
                         MsgUtil.sendActionBar(event.getPlayer(), getMessageWithSuffix("broken"));
                         return;

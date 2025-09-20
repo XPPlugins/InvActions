@@ -36,7 +36,7 @@ public class AutoFarmer extends RootModule {
                 if (!isEndedCooldown(event.getPlayer(), 100)) return;  //每2tick一次
 
                 if (ItemUtil.typeIsOr(event.getClickedBlock(), Material.MELON, Material.PUMPKIN)) {
-                    if (InvActionsServerConfig.getCurrent().isAutoFarmer_AllowPumpkinAndMelon()) return;
+                    if (!InvActionsServerConfig.getCurrent().isAutoFarmer_AllowPumpkinAndMelon()) return;
 
                     if (event.getItem() != null && event.getItem().getType() == Material.SHEARS) return;
 

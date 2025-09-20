@@ -15,18 +15,17 @@ import me.xpyex.lib.xplib.util.RootUtil;
 import me.xpyex.plugin.invactions.bukkit.InvActions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import sun.reflect.Reflection;
 
 public class ClassUtil extends RootUtil {
     private static final WeakHashMap<String, Class<?>> CLASS_CACHE = new WeakHashMap<>();
 
     @NotNull
-    public static Class<?> getClass(String name, boolean needInitClass, boolean isDeepSearch) throws ClassNotFoundException {
+    public static Class<?> getClass(String name, @Deprecated boolean needInitClass, boolean isDeepSearch) throws ClassNotFoundException {
         if (!CLASS_CACHE.containsKey(name)) {
             try {
                 if (needInitClass) CLASS_CACHE.put(name, Class.forName(name));
                 else
-                    CLASS_CACHE.put(name, Class.forName(name, needInitClass, Reflection.getCallerClass().getClassLoader()));
+                    CLASS_CACHE.put(name, Class.forName(name, false, getCallerClass().getClassLoader()));
             } catch (ReflectiveOperationException ignored) {
                 try {
                     CLASS_CACHE.put(name, Class.forName(name, needInitClass, ClassLoader.getSystemClassLoader()));
@@ -126,5 +125,21 @@ public class ClassUtil extends RootUtil {
 
         // 两者都是基元类，或两者均非，则直接比较
         return Objects.equals(class1, class2);
+    }
+
+    /**
+     * @since Java17
+     * @return Caller Class
+     */
+    private static Class<?> getCallerClass() {
+        try {
+            return new SecurityManager() {
+                public Class<?> getCallerClass() {
+                    return getClassContext()[2];
+                }
+            }.getCallerClass();
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

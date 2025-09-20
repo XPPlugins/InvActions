@@ -33,7 +33,7 @@ public class InvUtil {
             return;
         }
 
-        ItemStack copiedTool = new ItemStack(player.getInventory().getItem(equipmentSlot));
+        ItemStack copiedTool = new ItemStack(ValueUtil.getOrDefault(player.getInventory().getItem(equipmentSlot), AIR_STACK));
         ItemStack copiedSlot = new ItemStack(ValueUtil.getOrDefault(player.getInventory().getItem(slot), AIR_STACK));
         player.getInventory().setItem(slot, copiedTool);
         player.getInventory().setItem(equipmentSlot, copiedSlot);

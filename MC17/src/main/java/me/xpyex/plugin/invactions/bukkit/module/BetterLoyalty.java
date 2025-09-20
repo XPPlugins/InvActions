@@ -78,6 +78,7 @@ public class BetterLoyalty extends RootModule {
         if (e1 == null || e2 == null) {
             return 0;
         }
+        if (e1.getWorld() != e2.getWorld()) return Integer.MAX_VALUE;
         double x1 = e1.getLocation().getX();
         double z1 = e1.getLocation().getZ();
         double x2 = e2.getLocation().getX();
