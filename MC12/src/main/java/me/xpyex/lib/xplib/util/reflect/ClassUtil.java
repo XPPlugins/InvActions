@@ -128,8 +128,8 @@ public class ClassUtil extends RootUtil {
     }
 
     /**
-     * @since Java17
      * @return Caller Class
+     * @since Java17
      */
     private static Class<?> getCallerClass() {
         try {
