@@ -85,10 +85,7 @@ public class ReplaceBrokenTool extends RootModule {
                     ItemStack content = event.getPlayer().getInventory().getItem(i);  //背包里的那份道具
                     if (content == null || content.getType() == Material.AIR) continue;
 
-                    System.out.println("content.getType() = " + content.getType());
-                    System.out.println("brokenItem.getType() = " + brokenItem.getType());
                     if (Objects.equals(content.getType(), brokenItem.getType())) {  //同一种类型的道具
-                        System.out.println("stop");
                         InvUtil.swapSlot(event.getPlayer(), finalSlot, i);
                         MsgUtil.sendActionBar(event.getPlayer(), getMessageWithSuffix("broken"));
                         return;
