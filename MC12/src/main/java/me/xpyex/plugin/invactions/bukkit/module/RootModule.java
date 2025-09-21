@@ -65,7 +65,7 @@ public abstract class RootModule implements Listener {
     public void registerCustomListener() {
     }
 
-    protected boolean canLoad() throws NoClassDefFoundError {
+    protected boolean canLoad() throws Throwable {
         return true;
         //
     }

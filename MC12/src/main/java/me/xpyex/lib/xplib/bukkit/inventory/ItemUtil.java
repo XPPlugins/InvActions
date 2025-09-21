@@ -21,10 +21,10 @@ public class ItemUtil extends RootUtil {
      * @return 全新的ItemStack
      */
     public static ItemStack getItemStack(ItemStack stack, String name, String... lore) {
-        ValueUtil.notNull("参数不应为null", stack, name);
+        ValueUtil.notNull("stack参数不应为null", stack);
         ItemStack out = new ItemStack(stack);
         ItemMeta meta = out.getItemMeta();
-        meta.setDisplayName(MsgUtil.getColorMsg(name));
+        if (name != null) meta.setDisplayName(MsgUtil.getColorMsg(name));
         if (lore != null && lore.length > 0) {
             meta.setLore(Arrays.stream(lore).map(MsgUtil::getColorMsg).collect(Collectors.toList()));
         }
@@ -41,7 +41,7 @@ public class ItemUtil extends RootUtil {
      * @return 全新的ItemStack
      */
     public static ItemStack getItemStack(Material material, String name, String... lore) {
-        ValueUtil.notNull("参数不应为null", material, name);
+        ValueUtil.notNull("material参数不应为null", material);
         return getItemStack(new ItemStack(material), name, lore);
         //
     }
