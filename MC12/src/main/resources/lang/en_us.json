@@ -113,7 +113,7 @@
                 "&fIn the inventory, &e&lShift+Right Click &fon a Shulker Box",
                 "&fOr",
                 "&fHolding a Shulker Box, &e&lShift+Right Click",
-                "&fTo directly open the Shulker Box"
+                "&fTo directly open the Shulker Box, without placing it"
             ]
         }
     },
@@ -149,7 +149,7 @@
     },
     "State": {
         "current": "&fCurrent state:",
-        "server_disabled": "&4Server disabled",
+        "server_disabled": "&4Disabled by Server",
         "player_disabled": "&cDisabled",
         "player_enabled": "&aEnabled",
         "perm_deny": "&cPermission denied"

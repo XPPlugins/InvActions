@@ -12,6 +12,8 @@ import org.bukkit.plugin.Plugin;
 
 public class ConfigUtil extends RootUtil {
     private static final HashMap<String, Object> CONFIGS = new HashMap<>();
+    //Key: PluginName/FilePath(ConvertType)
+    //Value: Config Instance in type
 
     public static <T> T getConfig(Plugin plugin, Class<T> type) {
         return getConfig(plugin, "config", type);
@@ -70,7 +72,7 @@ public class ConfigUtil extends RootUtil {
     public static void saveConfig(Plugin plugin, String path, boolean replaced) {
         for (String key : CONFIGS.keySet()) {
             if (key.startsWith(plugin.getName() + "/" + path + "(")) {
-                saveConfig(plugin, path, getConfig(plugin, path, JsonObject.class), true);
+                saveConfig(plugin, path, CONFIGS.get(key), true);
                 return;
             }
         }

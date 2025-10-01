@@ -1,8 +1,10 @@
 package me.xpyex.plugin.invactions.bukkit.module;
 
+import lombok.experimental.ExtensionMethod;
 import me.xpyex.lib.xplib.bukkit.strings.MsgUtil;
 import me.xpyex.lib.xplib.util.reflect.MethodUtil;
 import me.xpyex.plugin.invactions.bukkit.InvActions;
+import me.xpyex.plugin.invactions.bukkit.util.EventUtil;
 import me.xpyex.plugin.invactions.bukkit.util.InvUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -16,6 +18,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
+@ExtensionMethod(EventUtil.class)
 public class QuickMove extends RootModule {
 
     private static final String METADATA_CLICK = "InvActions_CallingClick";
@@ -68,9 +71,7 @@ public class QuickMove extends RootModule {
                         if (content == null || Material.AIR.equals(content.getType())) continue;
 
                         if (content.isSimilar(item)) {
-                            InventoryClickEvent clickEvent = new InventoryClickEvent(event.getView(), InventoryType.SlotType.OUTSIDE, i, ClickType.DROP, InventoryAction.DROP_ALL_SLOT);
-                            Bukkit.getPluginManager().callEvent(clickEvent);
-                            if (clickEvent.isCancelled()) {
+                            if (new InventoryClickEvent(event.getView(), InventoryType.SlotType.OUTSIDE, i, ClickType.DROP, InventoryAction.DROP_ALL_SLOT).callEvent().isCancelled()) {
                                 continue;
                             }
                             ItemStack copied = new ItemStack(content);
@@ -81,9 +82,7 @@ public class QuickMove extends RootModule {
                     }
                 }
 
-                InventoryClickEvent clickEvent = new InventoryClickEvent(event.getView(), InventoryType.SlotType.OUTSIDE, event.getWhoClicked().getInventory().getHeldItemSlot(), ClickType.DROP, InventoryAction.DROP_ALL_SLOT);
-                Bukkit.getPluginManager().callEvent(clickEvent);
-                if (clickEvent.isCancelled()) {
+                if (new InventoryClickEvent(event.getView(), InventoryType.SlotType.OUTSIDE, event.getWhoClicked().getInventory().getHeldItemSlot(), ClickType.DROP, InventoryAction.DROP_ALL_SLOT).callEvent().isCancelled()) {
                     event.getWhoClicked().removeMetadata(METADATA_CLICK, InvActions.getInstance());
                     event.getWhoClicked().removeMetadata(METADATA_DROP, InvActions.getInstance());
                     return;
@@ -111,9 +110,7 @@ public class QuickMove extends RootModule {
                         if (content == null || Material.AIR.equals(content.getType())) continue;
 
                         if (content.isSimilar(item)) {
-                            InventoryClickEvent clickEvent = new InventoryClickEvent(event.getView(), InventoryType.SlotType.CONTAINER, i, ClickType.SHIFT_LEFT, InventoryAction.MOVE_TO_OTHER_INVENTORY);
-                            Bukkit.getPluginManager().callEvent(clickEvent);  //从容器移动到玩家背包
-                            if (clickEvent.isCancelled()) {
+                            if (new InventoryClickEvent(event.getView(), InventoryType.SlotType.CONTAINER, i, ClickType.SHIFT_LEFT, InventoryAction.MOVE_TO_OTHER_INVENTORY).callEvent().isCancelled()) {
                                 continue;
                             }
                             ItemStack copied = new ItemStack(content);
@@ -136,8 +133,7 @@ public class QuickMove extends RootModule {
                         if (content == null || Material.AIR.equals(content.getType())) continue;
 
                         if (content.isSimilar(item)) {
-                            InventoryClickEvent clickEvent = new InventoryClickEvent(event.getView(), InventoryType.SlotType.CONTAINER, i, ClickType.SHIFT_LEFT, InventoryAction.MOVE_TO_OTHER_INVENTORY);
-                            if (clickEvent.isCancelled()) {  //从玩家背包移动到容器
+                            if (new InventoryClickEvent(event.getView(), InventoryType.SlotType.CONTAINER, i, ClickType.SHIFT_LEFT, InventoryAction.MOVE_TO_OTHER_INVENTORY).callEvent().isCancelled()) {  //从玩家背包移动到容器
                                 continue;
                             }
                             ItemStack copied = new ItemStack(content);

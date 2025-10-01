@@ -134,7 +134,7 @@ public final class InvActions extends XPPlugin {
             }
         } catch (IllegalArgumentException ignored) {
             warn("&c未找到&r" + langPath + ".json&c，将使用&r" + "zh_cn.json&c作为默认语言文件，您可以自行更改内容");
-            warn("&cCan't find `" + langPath + ".json` , use `zh_cn.json` as default. You can edit it by yourself.");
+            warn("&cFailed to get file `" + langPath + ".json` , use `zh_cn.json` as default. You can edit it by yourself.");
         }
         ConfigUtil.saveConfig(getInstance(), langPath, InvActionsMessage.getChineseDefault(), false, false);
         //如果原先没有文件，先新建一份，以简体中文为默认

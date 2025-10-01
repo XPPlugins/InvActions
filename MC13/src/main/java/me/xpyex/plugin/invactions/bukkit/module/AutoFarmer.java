@@ -1,11 +1,13 @@
 package me.xpyex.plugin.invactions.bukkit.module;
 
 import java.util.Collection;
+import lombok.experimental.ExtensionMethod;
 import me.xpyex.lib.xplib.bukkit.inventory.ItemUtil;
 import me.xpyex.lib.xplib.bukkit.language.LangUtil;
 import me.xpyex.lib.xplib.bukkit.strings.MsgUtil;
 import me.xpyex.lib.xplib.util.strings.StrUtil;
 import me.xpyex.plugin.invactions.bukkit.config.InvActionsServerConfig;
+import me.xpyex.plugin.invactions.bukkit.util.EventUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,6 +20,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+@ExtensionMethod(EventUtil.class)
 public class AutoFarmer extends RootModule {
     @Override
     protected boolean canLoad() {
@@ -40,11 +43,8 @@ public class AutoFarmer extends RootModule {
 
                     if (event.getItem() != null && event.getItem().getType() == Material.SHEARS) return;
 
-                    BlockBreakEvent blockBreakEvent = new BlockBreakEvent(event.getClickedBlock(), event.getPlayer());
-                    Bukkit.getPluginManager().callEvent(blockBreakEvent);
-                    if (blockBreakEvent.isCancelled()) {
-                        return;  //防止收割被保护的地方
-                    }
+                    if (new BlockBreakEvent(event.getClickedBlock(), event.getPlayer()).callEvent().isCancelled())
+                        return;
                     event.setCancelled(true);
                     MsgUtil.sendActionBar(event.getPlayer(), getMessageWithSuffix("harvest", LangUtil.getItemName(event.getClickedBlock().getType())));
                     event.getClickedBlock().breakNaturally(event.getPlayer().getInventory().getItemInMainHand());
@@ -56,14 +56,10 @@ public class AutoFarmer extends RootModule {
                     if (StrUtil.endsWithIgnoreCaseOr(event.getClickedBlock().getType().toString(), "_STEM", "FIRE")) {  //西瓜、南瓜的茎; 火
                         return;
                     }
-                    BlockBreakEvent blockBreakEvent = new BlockBreakEvent(event.getClickedBlock(), event.getPlayer());
-                    Bukkit.getPluginManager().callEvent(blockBreakEvent);
-                    if (blockBreakEvent.isCancelled()) {
+                    if (new BlockBreakEvent(event.getClickedBlock(), event.getPlayer()).callEvent().isCancelled()) {
                         return;  //防止收割被保护的地方
                     }
-                    BlockPlaceEvent blockPlaceEvent = new BlockPlaceEvent(event.getClickedBlock(), event.getClickedBlock().getState(), event.getClickedBlock(), event.getPlayer().getInventory().getItemInMainHand(), event.getPlayer(), true, event.getHand());
-                    Bukkit.getPluginManager().callEvent(blockPlaceEvent);
-                    if (blockPlaceEvent.isCancelled()) {
+                    if (new BlockPlaceEvent(event.getClickedBlock(), event.getClickedBlock().getState(), event.getClickedBlock(), event.getPlayer().getInventory().getItemInMainHand(), event.getPlayer(), true, event.getHand()).callEvent().isCancelled()) {
                         return;  //防止收割被保护的地方
                     }
                     event.setCancelled(true);
