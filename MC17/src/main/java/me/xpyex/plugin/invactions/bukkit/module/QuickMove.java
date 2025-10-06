@@ -6,7 +6,6 @@ import me.xpyex.lib.xplib.util.reflect.MethodUtil;
 import me.xpyex.plugin.invactions.bukkit.InvActions;
 import me.xpyex.plugin.invactions.bukkit.util.EventUtil;
 import me.xpyex.plugin.invactions.bukkit.util.InvUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;

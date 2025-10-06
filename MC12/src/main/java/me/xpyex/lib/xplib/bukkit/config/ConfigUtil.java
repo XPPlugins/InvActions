@@ -1,6 +1,5 @@
 package me.xpyex.lib.xplib.bukkit.config;
 
-import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
