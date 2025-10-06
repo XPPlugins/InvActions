@@ -10,6 +10,8 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -151,6 +153,22 @@ public class QuickShulkerBox extends RootModule {
         if (isOpenedShulkerBoxByMe(event.getPlayer())) {
             event.setCancelled(true);
             MsgUtil.sendActionBar(event.getPlayer(), "[InvActions] &cIllegal chat");
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    public void onBreak(BlockBreakEvent event) {
+        if (isOpenedShulkerBoxByMe(event.getPlayer())) {
+            event.setCancelled(true);
+            MsgUtil.sendActionBar(event.getPlayer(), "[InvActions] &cIllegal break");
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
+    public void onPlace(BlockPlaceEvent event) {
+        if (isOpenedShulkerBoxByMe(event.getPlayer())) {
+            event.setCancelled(true);
+            MsgUtil.sendActionBar(event.getPlayer(), "[InvActions] &cIllegal place");
         }
     }
 
