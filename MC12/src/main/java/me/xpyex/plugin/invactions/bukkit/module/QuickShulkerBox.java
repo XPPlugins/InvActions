@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -31,6 +32,8 @@ public class QuickShulkerBox extends RootModule {
     private static final String METADATA_KEY = "InvActions_Shulker";
 
     private static Inventory openShulkerBoxItem(Player player, int slot) {
+        if (isOpenedShulkerBoxByMe(player)) return null;  // 已经打开过潜影盒，但触发了事件，忽略
+
         ItemStack stack = player.getInventory().getItem(slot);
         if (stack == null) return null;
         if (stack.getAmount() != 1) return null;
@@ -38,7 +41,7 @@ public class QuickShulkerBox extends RootModule {
         ItemMeta meta = stack.getItemMeta();
         if (meta instanceof BlockStateMeta) {  //此处同时判断 != null
             BlockState state = ((BlockStateMeta) meta).getBlockState();
-            if (state instanceof ShulkerBox) {
+            if (state instanceof ShulkerBox) {  // 判断 潜影盒 和 != null
                 Inventory boxInv = ((ShulkerBox) state).getInventory();
                 player.setMetadata(METADATA_KEY, new FixedMetadataValue(InvActions.getInstance(), slot));
                 player.playSound(player.getLocation(), Sound.BLOCK_SHULKER_BOX_OPEN, 1f, 1f);
@@ -86,9 +89,14 @@ public class QuickShulkerBox extends RootModule {
     public void onInvClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player)) return;
         if (serverEnabled() && playerEnabled((Player) event.getWhoClicked())) {
-            if (event.isShiftClick() && event.isRightClick()) {
-                if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) return;
+            if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) return;  // 光标上有东西
+            if (!event.getWhoClicked().getInventory().equals(event.getClickedInventory())) return;  // 点击的是容器
 
+            if (event.getAction() == InventoryAction.CLONE_STACK) {  // 鼠标中键
+                if (openShulkerBoxItem((Player) event.getWhoClicked(), event.getSlot()) != null) {
+                    event.setCancelled(true);
+                }
+            } else if (event.isShiftClick() && event.isRightClick()) {  // Shift + 右键
                 if (openShulkerBoxItem((Player) event.getWhoClicked(), event.getSlot()) != null) {
                     event.setCancelled(true);
                 }
