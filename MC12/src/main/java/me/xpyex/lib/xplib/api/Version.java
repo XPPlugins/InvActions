@@ -7,17 +7,17 @@ import me.xpyex.lib.xplib.util.value.ValueUtil;
 public class Version implements Comparable<Version> {
     private final int[] versions;
     private final String betaInfo;
-    private final String ver;
+    private final String origin;
 
-    public Version(String ver) {
-        ValueUtil.notNull("ver不应为空", ver);
-        this.ver = ver;
+    public Version(String origin) {
+        ValueUtil.notNull("ver不应为空", origin);
+        this.origin = origin;
         String mainVer;
-        if (ver.contains("-")) {
-            mainVer = ver.split("-")[0];
-            betaInfo = ver.substring((mainVer + "-").length());
+        if (origin.contains("-")) {
+            mainVer = origin.split("-")[0];
+            betaInfo = origin.substring((mainVer + "-").length());
         } else {
-            mainVer = ver;
+            mainVer = origin;
             betaInfo = "";
         }
 
@@ -51,7 +51,7 @@ public class Version implements Comparable<Version> {
 
     @Override
     public String toString() {
-        return ver;
+        return origin;
         //
     }
 
@@ -103,7 +103,7 @@ public class Version implements Comparable<Version> {
     }
 
     public String getVersion() {
-        return ver;
+        return origin;
         //
     }
 

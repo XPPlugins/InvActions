@@ -25,6 +25,7 @@ repositories {
 dependencies {
     compileOnly 'org.jetbrains:annotations:24.0.0'
     compileOnly 'org.spigotmc:spigot-api:1.12.2-R0.1-SNAPSHOT'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
 }
 
 def targetJavaVersion = 8

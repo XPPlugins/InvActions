@@ -13,7 +13,7 @@ allprojects {
     }
 
     dependencies {
-        compileOnly 'com.google.code.gson:gson:2.10'
+        compileOnly 'com.google.code.gson:gson:2.10.1'
 
         // Lombok
         compileOnly 'org.projectlombok:lombok:1.18.30'
