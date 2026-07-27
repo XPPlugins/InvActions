@@ -1,6 +1,6 @@
 package me.xpyex.lib.xplib.api;
 
-import java.util.TreeSet;
+
 import me.xpyex.lib.xplib.util.strings.StrUtil;
 import me.xpyex.lib.xplib.util.value.ValueUtil;
 
@@ -22,9 +22,9 @@ public class Version implements Comparable<Version> {
         }
 
         if (StrUtil.containsIgnoreCaseOr(mainVer, "version", "ver", "v")) {
-            mainVer = mainVer.replace("version", "");
-            mainVer = mainVer.replace("ver", "");
-            mainVer = mainVer.replace("v", "");
+            mainVer = mainVer.replace("version", "")
+                          .replace("ver", "")
+                          .replace("v", "");
         }
 
         String[] vers = mainVer.split("\\.");
@@ -58,43 +58,49 @@ public class Version implements Comparable<Version> {
     /**
      * 比较两个Version
      *
-     * @param version 目标Version
-     * @return 返回0相等，返回1表示this较新于version，返回-1表示this较旧于version
+     * @param target 目标Version
+     * @return 返回0相等，返回1表示this较新于target，返回-1表示this较旧于target
      */
-    public int compareTo(Version version) {
-        if (version == null) return -1;
+    public int compareTo(Version target) {
+        if (target == null) return -1;
 
-        if (this == version) return 0;
+        if (this == target) return 0;
 
-        if (version.versions.length > this.versions.length) {
-            return -1;
-        }
-        if (version.versions.length < this.versions.length) {  //1.19.3比1.19新
-            return 1;
-        }
+        if (origin.equals(target.origin)) return 0;
 
-        for (int i = 0; i < versions.length; i++) {
-            if (version.versions[i] > this.versions[i]) {
+        for (int i = 0; i < versions.length && i < target.versions.length; i++) {
+            if (target.versions[i] > this.versions[i]) {
                 return -1;  //this较旧
             }
-            if (version.versions[i] == this.versions[i]) {
-                if (i != versions.length - 1) {  //还没检查完的情况
-                    continue;
+
+            if (target.versions[i] == this.versions[i]) {
+                if (versions.length != target.versions.length) {
+                    if (i == versions.length - 1 || i == target.versions.length - 1) {  //有其中一个到达极限了
+                        return this.versions.length > target.versions.length ? 1 : -1;
+                        // 举例。如果判断到第1位，都是1，不满足该条件，直接跳过
+                        // 如果判断到第2位，都是1.19，那总长度短的是老版本，即target是老版本
+                    } else {  // 都还没到达极限
+                        continue;
+                    }
                 }
+                //确定两个长度相等
+                if (i != versions.length - 1) continue;
+                //还没检查到最后一个
+
+
                 //往下就是主版本已经检查完了
-                if (version.betaInfo.equals(this.betaInfo)) {  //Beta版本是否一致
+                if (target.betaInfo.equals(this.betaInfo)) {  //Beta版本是否一致
                     return 0;
                 }
-                TreeSet<String> compare = new TreeSet<>();  //排序betaInfo
-                compare.add(version.betaInfo);
-                compare.add(this.betaInfo);
-                if (compare.first().equals(this.betaInfo)) {  //this较新
+                if (this.betaInfo.isEmpty()) {  //正式版永远最新
                     return 1;
-                } else {
+                }
+                if (target.betaInfo.isEmpty()) {
                     return -1;
                 }
+                return this.betaInfo.compareTo(target.betaInfo);
             }
-            if (version.versions[i] < this.versions[i]) {
+            if (target.versions[i] < this.versions[i]) {
                 return 1;  //this较新
             }
         }
