@@ -15,6 +15,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -30,6 +31,7 @@ import org.bukkit.metadata.Metadatable;
 
 public class QuickShulkerBox extends RootModule {
     private static final String METADATA_KEY = "InvActions_Shulker";
+    private static boolean existsShulkerInv = false;
 
     private static Inventory openShulkerBoxItem(Player player, int slot) {
         if (isOpenedShulkerBoxByMe(player)) return null;  // 已经打开过潜影盒，但触发了事件，忽略
@@ -47,6 +49,7 @@ public class QuickShulkerBox extends RootModule {
                 player.playSound(player.getLocation(), Sound.BLOCK_SHULKER_BOX_OPEN, 1f, 1f);
                 try {
                     player.openInventory(boxInv);
+                    existsShulkerInv = true;
                     return boxInv;
                 } catch (Throwable e) {
                     Inventory inventory = Bukkit.createInventory(player, 27);
@@ -65,6 +68,17 @@ public class QuickShulkerBox extends RootModule {
 
     private static void playerCloseShulkerBox(Player player, Inventory inventoryWillBeClosed) {
         if (isOpenedShulkerBoxByMe(player)) {  // 当前是InvActions提供的潜影盒界面
+            if (existsShulkerInv) {
+                if (inventoryWillBeClosed.getType() != InventoryType.SHULKER_BOX) {
+                    return;
+                    // 上文的try部分成功了，没有走catch
+                    // 说明存在这个ShulkerBoxInv
+                    // 此时如果打开的不是潜影盒，则忽略
+                }
+            } else if (inventoryWillBeClosed.getHolder() != player) {
+                return;  // 上文走的catch部分，此时判断InvHolder不是玩家，则忽略
+            }
+
             ItemStack stack = player.getInventory().getItem(player.getMetadata(METADATA_KEY).get(0).asInt());  // 因为不允许玩家移动潜影盒，所以ItemStack应当是安全的、无变化的
             if (stack != null && stack.getType().toString().endsWith("SHULKER_BOX")) {
                 ItemMeta meta = stack.getItemMeta();
