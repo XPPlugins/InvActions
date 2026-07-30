@@ -116,7 +116,14 @@ public abstract class RootModule implements Listener {
                    ))
                    .setClickEffect((player, clickType, itemStack) -> {
                        try {
-                           FieldUtil.setInstanceField(SettingsUtil.getConfig(player), getName(), !playerEnabled(player));
+                           boolean changed = !playerEnabled(player);
+                           FieldUtil.setInstanceField(SettingsUtil.getConfig(player), getName(), changed);
+                           onPlayerSetting(player, changed);
+                           if (changed) {
+                               onPlayerEnable(player);
+                           } else {
+                               onPlayerDisable(player);
+                           }
                        } catch (ReflectiveOperationException e) {
                            throw new RuntimeException(e);
                        }
@@ -155,7 +162,7 @@ public abstract class RootModule implements Listener {
     public boolean serverEnabled() {
         if (!canLoad) return false;
         try {
-            return FieldUtil.<Boolean>getInstanceField(InvActionsServerConfig.getCurrent(), getName());
+            return FieldUtil.getInstanceField(InvActionsServerConfig.getCurrent(), getName());
         } catch (ReflectiveOperationException ignored) {
             return false;
         }
@@ -166,7 +173,7 @@ public abstract class RootModule implements Listener {
         if (InvActionsServerConfig.getCurrent().isPermCheck() && !player.hasPermission("InvActions.use.module." + getName()))
             return false;
         try {
-            return FieldUtil.<Boolean>getInstanceField(SettingsUtil.getConfig(player), getName());
+            return FieldUtil.getInstanceField(SettingsUtil.getConfig(player), getName());
         } catch (ReflectiveOperationException ignored) {
             return false;
         }
@@ -186,4 +193,10 @@ public abstract class RootModule implements Listener {
         }
         return false;
     }
+
+    public void onPlayerEnable(Player player) {}
+
+    public void onPlayerDisable(Player player) {}
+
+    public void onPlayerSetting(Player player, boolean newState) {}
 }

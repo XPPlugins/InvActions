@@ -153,7 +153,7 @@ public final class InvActions extends XPPlugin {
 
     public void registerListeners() {
         getServer().getScheduler().runTaskAsynchronously(getInstance(), () -> {
-            ClassUtil.scanAndGetClassInstances("me.xpyex.plugin.invactions.bukkit.module", RootModule.class)
+            ClassUtil.scanAndGetClassInstances(RootModule.class.getPackage().getName(), RootModule.class)
                 .stream()
                 .filter(o -> o instanceof Pair)
                 .forEach(o -> {
