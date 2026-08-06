@@ -40,10 +40,13 @@ public class QuickShulkerBox extends RootModule {
         if (stack == null) return null;
         if (stack.getAmount() != 1) return null;
 
+        if (player.getOpenInventory().getType() == InventoryType.SHULKER_BOX) return null;
+
         ItemMeta meta = stack.getItemMeta();
         if (meta instanceof BlockStateMeta) {  //此处同时判断 != null
             BlockState state = ((BlockStateMeta) meta).getBlockState();
             if (state instanceof ShulkerBox) {  // 判断 潜影盒 和 != null
+                player.closeInventory();
                 Inventory boxInv = ((ShulkerBox) state).getInventory();
                 player.setMetadata(METADATA_KEY, new FixedMetadataValue(InvActions.getInstance(), slot));
                 player.playSound(player.getLocation(), Sound.BLOCK_SHULKER_BOX_OPEN, 1f, 1f);
@@ -79,7 +82,8 @@ public class QuickShulkerBox extends RootModule {
                 return;  // 上文走的catch部分，此时判断InvHolder不是玩家，则忽略
             }
 
-            ItemStack stack = player.getInventory().getItem(player.getMetadata(METADATA_KEY).get(0).asInt());  // 因为不允许玩家移动潜影盒，所以ItemStack应当是安全的、无变化的
+            ItemStack stack = player.getInventory().getItem(player.getMetadata(METADATA_KEY).get(0).asInt());
+            // 因为不允许玩家移动潜影盒，所以理论上ItemStack应当是安全的、无变化的，所以判断一下类型就好
             if (stack != null && stack.getType().toString().endsWith("SHULKER_BOX")) {
                 ItemMeta meta = stack.getItemMeta();
                 if (meta instanceof BlockStateMeta) {  //此处同时判断 != null
@@ -104,7 +108,8 @@ public class QuickShulkerBox extends RootModule {
         if (!(event.getWhoClicked() instanceof Player)) return;
         if (serverEnabled() && playerEnabled((Player) event.getWhoClicked())) {
             if (event.getCursor() != null && event.getCursor().getType() != Material.AIR) return;  // 光标上有东西
-            if (!event.getWhoClicked().getInventory().equals(event.getClickedInventory())) return;  // 点击的是容器
+            if (!event.getWhoClicked().getInventory().equals(event.getClickedInventory())) return;  // 没点自己背包，即点击的是容器
+            if (isOpenedShulkerBoxByMe(event.getWhoClicked())) return;  // 当前是InvActions提供的潜影盒界面
 
             if (event.getAction() == InventoryAction.CLONE_STACK) {  // 鼠标中键
                 if (openShulkerBoxItem((Player) event.getWhoClicked(), event.getSlot()) != null) {
