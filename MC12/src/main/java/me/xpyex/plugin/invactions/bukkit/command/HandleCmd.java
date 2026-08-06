@@ -22,7 +22,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public class HandleCmd implements CommandExecutor {
     public static final ItemStack MENU_WOOL_RED;
@@ -46,7 +45,7 @@ public class HandleCmd implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Bukkit.getScheduler().runTaskAsynchronously(InvActions.getInstance(), () -> {
             if (args.length != 0) {
                 if (args[0].equalsIgnoreCase("reload")) {
